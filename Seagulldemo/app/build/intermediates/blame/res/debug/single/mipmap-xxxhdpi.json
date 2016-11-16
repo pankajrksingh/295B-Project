@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\Pankaj\\Documents\\295 Final Year Project\\Android App\\Seagulldemo\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi\\ic_launcher.png",
+        "source": "C:\\Users\\Pankaj\\Documents\\295 Final Year Project\\Android App\\Seagulldemo\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Seagulldemo\\Seagulldemo\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xxxhdpi\\ic_launcher.png",
+        "source": "C:\\Seagulldemo\\Seagulldemo\\app\\src\\main\\res\\mipmap-xxxhdpi\\ic_launcher.png"
+    }
+]

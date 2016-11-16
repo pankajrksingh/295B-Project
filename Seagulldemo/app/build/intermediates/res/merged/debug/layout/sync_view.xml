@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <Button android:id="@+id/btn_sync"
+        		   android:layout_width="wrap_content"
+        		   android:layout_height="wrap_content"
+        		   android:text="Sync now!"
+        />
+    
+    <LinearLayout
+        android:id="@+id/sync_tv_layout11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Transfer percent: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_percent"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+     <LinearLayout
+        android:id="@+id/sync_tv_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   PED available: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_ped_avail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+         <LinearLayout
+        android:id="@+id/sync_tv_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   PED received: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_ped_recv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+          <LinearLayout
+        android:id="@+id/sync_tv_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   ECG available: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_ecg_avail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        <LinearLayout
+        android:id="@+id/sync_tv_layout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   ECG received: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_ecg_recv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        <LinearLayout
+        android:id="@+id/sync_tv_layout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   DIAG available: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_diag_avail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        <LinearLayout
+        android:id="@+id/sync_tv_layout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   DIAG received: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_diag_recv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+        <LinearLayout
+        android:id="@+id/sync_tv_layout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   SLEEP available: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_sleep_avail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        <LinearLayout
+        android:id="@+id/sync_tv_layout8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   SLEEP received: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_sleep_recv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+        <LinearLayout
+        android:id="@+id/sync_tv_layout9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="  Transfer Result: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_result"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+      <LinearLayout
+        android:id="@+id/sync_tv_layout9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="  Erase Result: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sync_erase_result"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+      <LinearLayout
+        android:id="@+id/tv_layout10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+         >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=" Sleep Result: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sleep_result"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+    
+
+</LinearLayout>

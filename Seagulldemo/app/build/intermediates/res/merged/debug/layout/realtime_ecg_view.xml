@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:id="@+id/first_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <Button
+                android:id="@+id/btn_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="Start"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                 />
+         <Button
+                android:id="@+id/btn_stop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="Stop"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                />
+
+    </LinearLayout>
+    
+        <!-- drawing with view.  -->
+  <LinearLayout
+        android:id="@+id/wave_layout"
+        android:layout_width="1080px"
+        android:layout_height="384px"
+        android:orientation="horizontal" >
+    </LinearLayout>
+    
+  <LinearLayout 
+      android:id="@+id/result1"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_hr_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    android:text="Heart Rate"
+     		    />
+            <TextView 
+          android:id="@+id/tv_heartRate"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      "
+  </LinearLayout>
+  <LinearLayout 
+      android:id="@+id/result2"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_rrInterval_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    android:text="RR Interval"
+     		    />
+            <TextView 
+          android:id="@+id/tv_rrInterval"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+  <LinearLayout 
+      android:id="@+id/result3"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_heartBeatCount_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Heart Beat Count"
+     		    />
+            <TextView 
+          android:id="@+id/tv_heartBeatCount"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+    <LinearLayout 
+      android:id="@+id/result4"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_hrv_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="HRV"
+     		    />
+            <TextView 
+          android:id="@+id/tv_hrv"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+      <LinearLayout 
+      android:id="@+id/result5"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_mood_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Mood"
+     		    />
+            <TextView 
+          android:id="@+id/tv_mood"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+    <LinearLayout 
+      android:id="@+id/result6"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_stress_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Stress"
+     		    />
+            <TextView 
+          android:id="@+id/tv_stress"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+      <LinearLayout 
+      android:id="@+id/result7"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_heartAge_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Heart Age"
+     		    />
+            <TextView 
+          android:id="@+id/tv_heartAge"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+        <LinearLayout 
+      android:id="@+id/result8"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_robust_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Robust HR"
+     		    />
+            <TextView 
+          android:id="@+id/tv_robust"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  <!--
+         <LinearLayout 
+      android:id="@+id/result8"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_respiratoryRate_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="Respiratory Rate"
+     		    />
+            <TextView 
+          android:id="@+id/tv_respiratoryRate"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  -->
+          <LinearLayout 
+      android:id="@+id/result9"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_lsq_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="OverallSignalQuality"
+     		    />
+            <TextView 
+          android:id="@+id/tv_lsq"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+          <LinearLayout 
+      android:id="@+id/result10"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_finalHRV_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="finalHRV"
+     		    />
+            <TextView 
+          android:id="@+id/tv_finalHRV"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+  
+           <LinearLayout 
+      android:id="@+id/result11"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+      <TextView 
+          android:id="@+id/tv_ssq_label"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		     android:text="SignalQuality"
+     		    />
+            <TextView 
+          android:id="@+id/tv_ssq"
+                android:layout_width="0dp"
+     		    android:layout_height="wrap_content"
+     		    android:layout_weight="1"
+     		    />
+      
+  </LinearLayout>
+
+    
+
+</LinearLayout>

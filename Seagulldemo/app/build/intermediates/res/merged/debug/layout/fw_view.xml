@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:id="@+id/fw_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <Button
+                android:id="@+id/btn_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="Start"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                 />
+        </LinearLayout>
+    
+        <LinearLayout
+        android:id="@+id/fw_tv_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   In transfer: "/>
+	    	<TextView 
+	        android:id="@+id/tv_in_transfer"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="false"/>
+        </LinearLayout>
+        
+
+        
+       <LinearLayout
+        android:id="@+id/fw_tv_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Transfer percent: "/>
+	    	<TextView 
+	        android:id="@+id/tv_transfer_percent"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+         <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal" >
+	    	
+    </LinearLayout>
+    
+        <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Transfer Report "/>
+        
+        <LinearLayout
+        android:id="@+id/fw_tv_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Transfer result: "/>
+	    	<TextView 
+	        android:id="@+id/tv_transfer_result"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+        
+        
+                <LinearLayout
+        android:id="@+id/fw_tv_layout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   checksum: "/>
+	    	<TextView 
+	        android:id="@+id/tv_transfer_checksum"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+
+	<LinearLayout
+        android:id="@+id/fw_tv_layout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Size: "/>
+	    	<TextView 
+	        android:id="@+id/tv_transfer_size"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+	<LinearLayout
+        android:id="@+id/fw_tv_layout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Transfer: "/>
+	    	<TextView 
+	        android:id="@+id/tv_transfer_transfer"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+
+
+</LinearLayout>

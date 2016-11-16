@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout
+        android:id="@+id/sp_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <Button
+                android:id="@+id/btn_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="Start"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                 />
+                <Button
+                android:id="@+id/btn_stop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:text="Stop"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                 />
+        </LinearLayout>
+    
+        <LinearLayout
+        android:id="@+id/sp_tv_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   TS: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_ts"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+
+        
+       <LinearLayout
+        android:id="@+id/sp_tv_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Steps: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_steps"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+         <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal" >
+	    	
+    </LinearLayout>
+
+        
+        <LinearLayout
+        android:id="@+id/sp_tv_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Calories: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_calories"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+        
+        
+                <LinearLayout
+        android:id="@+id/sp_tv_layout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Distance: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_distance"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+
+	<LinearLayout
+        android:id="@+id/sp_tv_layout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Energy: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_energy"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        
+	<LinearLayout
+        android:id="@+id/sp_tv_layout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   Total activity time: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_mode"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        	<LinearLayout
+        android:id="@+id/sp_tv_layout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   HR: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_hr"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+        <LinearLayout
+        android:id="@+id/sp_tv_layout8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+             <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="   ACTCALORIES: "/>
+	    	<TextView 
+	        android:id="@+id/tv_sp_actcalories"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        />
+        </LinearLayout>
+
+
+</LinearLayout>
