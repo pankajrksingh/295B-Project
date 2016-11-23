@@ -6,7 +6,10 @@ from scipy.interpolate import interp1d #Import the interpolate function from Sci
 from scipy.signal import butter, lfilter #Import the extra module required
 from scipy import signal
 
+
 measures = {}
+filter_cutoff = 20.0
+filter_order = 5
 
 
 def get_data(filename):
@@ -17,18 +20,7 @@ def get_smple_rate(dataset, time_type):
     # Simple way to get sample rate
     if time_type == 'timer':
         sampletimer = [x for x in dataset.timer]  # dataset.timer is a ms counter with start of recording at '0'
-        print("len(sampletimer) : " + str(len(sampletimer)))
-        print("sampletimer[-1] : " + str(sampletimer[-1]))
-        # measures['fs'] = math.ceil((len(sampletimer) / sampletimer[-1]) * 100)  # Divide total length of dataset by last timer entry. This is in ms, so multiply by 1000 to get Hz value
-        measures['fs'] = math.ceil((float(len(sampletimer)) / float(sampletimer[-1])) * 100)
-
-    # If your timer is a date time string, convert to UNIX timestamp to more easily calculate with, use something like this:
-    if time_type == 'datetime':
-        unix_time = []
-        for x in dataset.datetime:
-            dt = datetime.datetime.strptime(Datum, "%Y-%m-%d %H:%M:%S.%f")
-            unix_time.append(time.mktime(dt.timetuple()) + (dt.microsecond / 1000000.0))
-        measures['fs'] = (len(unix_time) / (unix_time[-1] - unix_time[0]))
+        measures['fs'] = math.ceil((len(sampletimer) / sampletimer[-1]) * 100)  # Divide total length of dataset by last timer entry. This is in ms, so multiply by 1000 to get Hz value
 
     print ("Sample Rate : " + str(measures['fs']))
     return measures['fs']
@@ -47,20 +39,24 @@ def butter_lowpass_filter(data, cutoff, fs, order):
     y = lfilter(b, a, data)
     return y
 
-def filter_signal(dataset):
+def filter_signal(dataset, fs):
     #Filtering the signals
-    filtered = butter_lowpass_filter(dataset.hart, 2.5, 100.0, 5)
+    filtered = butter_lowpass_filter(dataset, filter_cutoff, fs, filter_order)
 
-    # Plot it
-    plt.subplot(211)
-    plt.plot(dataset.hart, color='Blue', alpha=0.5, label='Original Signal')
-    plt.legend(loc=4)
-    plt.subplot(212)
-    plt.plot(filtered, color='Red', label='Filtered Signal')
-    # plt.ylim(200,
-    #          800)  # limit filtered signal to have same y-axis as original (filter response starts at 0 so otherwise the plot will be scaled)
-    plt.legend(loc=4)
-    plt.show()
+    # # Plot it
+    # plt.subplot(211)
+    # plt.plot(dataset, color='Blue', alpha=0.5, label='Original Signal')
+    # plt.xlim(4000, 8000)
+    # plt.legend(loc=4)
+    # plt.subplot(212)
+    # plt.plot(filtered, color='Red', label='Filtered Signal')
+    # plt.xlim(4000, 8000)
+    # # plt.ylim(200,
+    # #          800)  # limit filtered signal to have same y-axis as original (filter response starts at 0 so otherwise the plot will be scaled)
+    # plt.legend(loc=4)
+    # plt.show()
+
+
     return filtered
 
 
@@ -167,14 +163,14 @@ def calc_fd_measures(dataset, fs):
 
     f = interp1d(RR_x, RR_y, kind='cubic')  # Interpolate the signal with cubic spline interpolation
 
-    print("Frequency domain at x 250")
-    print f(250)
+    # print("Frequency domain at x 250")
+    # print f(250)
 
-    plt.title("Original and Interpolated Signal")
-    plt.plot(RR_x, RR_y, label="Original", color='blue')
-    plt.plot(RR_x_new, f(RR_x_new), label="Interpolated", color='red')
-    plt.legend()
-    plt.show()
+    # plt.title("Original and Interpolated Signal")
+    # plt.plot(RR_x, RR_y, label="Original", color='blue')
+    # plt.plot(RR_x_new, f(RR_x_new), label="Interpolated", color='red')
+    # plt.legend()
+    # plt.show()
 
     #Set variables
     n = len(dataset.hart) #Length of the signal
@@ -193,13 +189,13 @@ def calc_fd_measures(dataset, fs):
     hf = np.trapz(abs(Y[(frq >= 0.16) & (frq <= 0.5)]))  # Do the same for 0.16-0.5Hz (HF)
     print "HF:", hf
 
-    # Plot
-    plt.title("Frequency Spectrum of Heart Rate Variability")
-    plt.xlim(0, 0.6)  # Limit X axis to frequencies of interest (0-0.6Hz for visibility, we are interested in 0.04-0.5)
-    plt.ylim(0, 50)  # Limit Y axis for visibility
-    plt.plot(frq, abs(Y))  # Plot it
-    plt.xlabel("Frequencies in Hz")
-    plt.show()
+    # # Plot
+    # plt.title("Frequency Spectrum of Heart Rate Variability")
+    # plt.xlim(0, 0.6)  # Limit X axis to frequencies of interest (0-0.6Hz for visibility, we are interested in 0.04-0.5)
+    # plt.ylim(0, 50)  # Limit Y axis for visibility
+    # plt.plot(frq, abs(Y))  # Plot it
+    # plt.xlabel("Frequencies in Hz")
+    # plt.show()
 
 def plotter(dataset, title):
     peaklist = measures['peaklist']
@@ -208,37 +204,81 @@ def plotter(dataset, title):
     plt.plot(dataset.hart, alpha=0.5, color='blue', label="raw signal")
     plt.plot(dataset.hart_rollingmean, color='green', label="moving average")
     plt.scatter(peaklist, ybeat, color='red', label="average: %.1f BPM" % measures['bpm'])
-    plt.scatter(peaklist, ybeat, color='yellow', label="RRSD: %.1f BPM" % measures['rrsd'])
+    plt.scatter(peaklist, ybeat, color='yellow', label="RRSD: %.1f" % measures['rrsd'])
     plt.legend(loc=4, framealpha=0.6)
     plt.show()
 
-def detect_p_wave(dataset):
-    print "P Wave detection"
-    # measures['pwavelist'] = []
-    # measures['qwavelist'] = []
+def detect_other_wave(dataset):
+    print "Other Wave detection"
+    measures['pwavelist'] = []
+    measures['qwavelist'] = []
+    measures['swavelist'] = []
+    measures['twavelist'] = []
+    pwavelist = []
     qwavelist = []
-    # measures['pbeat'] = []
-    # measures['qbeat'] = []
+    swavelist = []
+    twavelist = []
+    measures['pbeat'] = []
+    measures['qbeat'] = []
+    measures['sbeat'] = []
+    measures['tbeat'] = []
+    pbeat = []
     qbeat = []
-    for index in range(len(measures['peaklist'])):
-        index_search = measures['peaklist'][index]
+    sbeat = []
+    tbeat = []
+    for index in range(len(measures['correct_beats'])):
+        # print measures['peaklist'][index]
+        reverse_index_search = measures['correct_beats'][index]
+        forward_indexsearch = measures['correct_beats'][index]
         # print index_search
         # print (dataset.hart[index_search] - dataset.hart[index_search - 1])
         # index_search -= 1
-        while ((dataset.hart[index_search] - dataset.hart[index_search-1]) > 0.05):
-            # print index_search
-            # print (dataset.hart[index_search] - dataset.hart[index_search-1])
-            index_search -= 1
+        if reverse_index_search > 2:
+            # print (dataset.hart[reverse_index_search] - dataset.hart[reverse_index_search-1])
+            while ((dataset.hart[reverse_index_search] - dataset.hart[reverse_index_search-1]) > 0.05 and reverse_index_search > 4 and (measures['correct_beats'][index] - reverse_index_search) < 50):
+                reverse_index_search -= 1
 
-        qbeat.append(dataset.hart[index_search])
-        qwavelist.append(index_search)
+            qbeat.append(dataset.hart[reverse_index_search])
+            qwavelist.append(reverse_index_search)
+
+        if forward_indexsearch > 2:
+            # print (dataset.hart[forward_indexsearch] - dataset.hart[forward_indexsearch+1])
+            # while ((dataset.hart[forward_indexsearch] - dataset.hart[forward_indexsearch+1]) > 0.05) and forward_indexsearch < len(dataset.hart)-4:
+            while ((dataset.hart[forward_indexsearch] - dataset.hart[forward_indexsearch + 1]) > 0.05 and forward_indexsearch < len(dataset.hart) and (forward_indexsearch - measures['correct_beats'][index]) < 50):
+                forward_indexsearch += 1
+
+            sbeat.append(dataset.hart[forward_indexsearch])
+            swavelist.append(forward_indexsearch)
+
+        # if reverse_index_search > 2:
+        #     while ((dataset.hart[reverse_index_search-1] - dataset.hart[reverse_index_search]) > 0.05) and reverse_index_search > 1:
+        #         reverse_index_search -= 1
+        #     pbeat.append(dataset.hart[reverse_index_search])
+        #     pwavelist.append(reverse_index_search)
+        #
+        # if forward_indexsearch > 2:
+        #     while ((dataset.hart[forward_indexsearch+1] - dataset.hart[forward_indexsearch]) > 0.05) and forward_indexsearch < len(dataset.hart)-4:
+        #         forward_indexsearch += 1
+        #
+        #     tbeat.append(dataset.hart[forward_indexsearch])
+        #     twavelist.append(forward_indexsearch)
+
+    measures['pwavelist'] = pwavelist
+    measures['pbeat'] = pbeat
 
     measures['qwavelist'] = qwavelist
     measures['qbeat'] = qbeat
 
-    print (measures['peaklist'])
-    print (measures['qbeat'])
-    print (measures['qwavelist'])
+    measures['swavelist'] = swavelist
+    measures['sbeat'] = sbeat
+
+    measures['twavelist'] = twavelist
+    measures['tbeat'] = tbeat
+
+    #
+    # print (measures['peaklist'])
+    # print (measures['qbeat'])
+    # print (measures['qwavelist'])
 
 
 
@@ -255,81 +295,59 @@ def false_detect_signals(dataset):
 
     # detect outliers
     cnt = 0
-    removed_beats = []
-    removed_beats_y = []
+    measures['removed_beats'] = []
+    measures['removed_beats_y'] = []
+    measures['correct_beats'] = []
+    measures['correct_beats_y'] = []
     RR2 = []
     while cnt < len(RR_list):
         if (RR_list[cnt] < upper_threshold) and (RR_list[cnt] > lower_threshold):
             RR2.append(RR_list[cnt])
+            measures['correct_beats'].append(peaklist[cnt])
+            measures['correct_beats_y'].append(ybeat[cnt])
             cnt += 1
         else:
-            removed_beats.append(peaklist[cnt])
-            removed_beats_y.append(ybeat[cnt])
+            measures['removed_beats'].append(peaklist[cnt])
+            measures['removed_beats_y'].append(ybeat[cnt])
             cnt += 1
 
     measures['RR_list_cor'] = RR2  # Append corrected RR-list to dictionary
+    print  measures['RR_list_cor']
 
-    detect_p_wave(dataset)
+    detect_other_wave(dataset)
 
-    plt.subplot(211)
+    # plt.subplot(211)
     plt.title('Marked Uncertain Peaks')
     plt.plot(dataset.hart, color='blue', alpha=0.6, label='heart rate signal')
-    plt.plot(measures['rolmean'], color='green')
-    plt.scatter(measures['peaklist'], measures['ybeat'], color='green')
-    plt.scatter(removed_beats, removed_beats_y, color='red', label='Detection uncertain')
-    plt.scatter(measures['qwavelist'], measures['qbeat'], color='yellow')
-    # plt.xlim(8000, 10000)
-    # plt.ylim(350, 650)
+    plt.plot(measures['rolmean'], color='green', label='rolling mean')
+    # plt.scatter(measures['peaklist'], measures['ybeat'], color='green', label='Correct Peaks')
+    plt.scatter(measures['correct_beats'], measures['correct_beats_y'], color='green', label='Correct Peaks')
+    plt.scatter(measures['removed_beats'], measures['removed_beats_y'], color='red', label='Detection uncertain')
+    # plt.scatter(measures['pwavelist'], measures['pbeat'], color='yellow', label='P Wave')
+    plt.scatter(measures['qwavelist'], measures['qbeat'], color='black', label='Q Wave')
+    plt.scatter(measures['swavelist'], measures['sbeat'], color='magenta', label='S Wave')
+    # plt.scatter(measures['twavelist'], measures['tbeat'], color='cyan', label='T Wave')
+    plt.xlim(8000, 10000)
+    plt.ylim(350, 650)
     plt.legend(framealpha=0.6, loc=4)
 
-    plt.subplot(212)
-    plt.title("RR-intervals with thresholds")
-    plt.plot(RR_list)
-    plt.axhline(y=upper_threshold, color='red')
-    plt.axhline(y=lower_threshold, color='red')
+    # plt.subplot(212)
+    # plt.title("RR-intervals with thresholds")
+    # plt.plot(RR_list)
+    # plt.axhline(y=upper_threshold, color='red')
+    # plt.axhline(y=lower_threshold, color='red')
     plt.show()
-
-# def process(dataset, hrw,
-#             fs):  # Remember; hrw was the one-sided window size (we used 0.75) and fs was the sample rate (file is recorded at 100Hz)
-#     rolmean(dataset, hrw, fs)
-#     detect_peaks(dataset)
-#     calc_RR(dataset, fs)
-#     calc_bpm()
-#     plotter(dataset, "My Heartbeat Plot")
 
 #Don't forget to update our process() wrapper to include the new function
 def process(input_dataset, hrw, fs):
-    # fs = get_smple_rate(input_dataset, 'timer')
-    fs = 100.0
-    d = {'hart': filter_signal(input_dataset)}
+    fs = float(fs)
+    print ("Sample Rate : " + str(fs))
+    d = {'hart': filter_signal(input_dataset, fs)}
     dataset = pd.DataFrame(data=d)
     rolmean(dataset, hrw, fs)
     fit_peaks(dataset, fs)
     calc_ts_measures()
     calc_fd_measures(dataset, fs)
-    plotter(dataset, "My Heartbeat Plot")
     false_detect_signals(dataset)
-
-
-    # data = filter_signal(input_dataset)
-    # val = signal.find_peaks_cwt(data, np.arange(1, 4))
-    # print val
-    # # val = np.array(val) - 1
-    #
-    # peak_val = []
-    #
-    # for i in val:
-    #     peak_val.append(data[i])
-    #
-    #
-    # print "-------------------------------"
-    # print val
-    # print "-------------------------------"
-    # print peak_val
-    # plt.title('All Peaks')
-    # plt.plot(data, color='blue', alpha=0.6, label='heart rate signal')
-    # plt.scatter(val, peak_val, color='green')
-    # plt.xlim(2000, 8000)
-    # plt.show()
-    #
-    # print "Done"
+    # # plotter(dataset, "My Heartbeat Plot")
+    print "Done"
