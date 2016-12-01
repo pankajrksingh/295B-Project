@@ -1,0 +1,599 @@
+package com.neurosky.seagulldemo;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.text.ParseException;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.neurosky.AlgoSdk.NskAlgoDataType;
+import com.neurosky.AlgoSdk.NskAlgoECGType;
+import com.neurosky.AlgoSdk.NskAlgoProfile;
+import com.neurosky.AlgoSdk.NskAlgoSdk;
+import com.neurosky.AlgoSdk.NskAlgoState;
+import com.neurosky.AlgoSdk.NskAlgoType;
+import com.neurosky.blecommunication.SeagullDevice;
+import com.neurosky.blecommunication.TGBleManager;
+import com.neurosky.blecommunication.base.SeagullEnumInfo.TGecgResult;
+import com.neurosky.blecommunication.base.TGBleHandler;
+import com.neurosky.AlgoSdk.NskAlgoSignalQuality;
+
+public class RealtimeECGActivity extends BaseActivity {
+//	private static final String TAG = RealtimeECGActivity.class.getSimpleName();
+	private static final String TAG = "Algo3p0";
+	private TGBleManager tgBleManager = null;
+	private SeagullDevice device = null;
+	private LinearLayout wave_layout;
+	private Button btn_start = null;
+	private Button btn_stop = null;
+
+	private TextView tv_heartRate, tv_rrInterval, tv_robust;
+	// private TextView tv_respiratoryRate;
+	private TextView tv_heartBeatCount, tv_hrv;
+	private TextView tv_mood, tv_heartAge, tv_stress;
+	private TextView tv_ssq, tv_lsq, tv_finalHRV;
+
+	/****************** Algo SDK 3.0 variable define *********************/
+	private Handler mHandler;
+	private NskAlgoSdk nskAlgoSdk;
+	private int currentActiveAlgo = 0;
+	private NskAlgoType currentSelectedAlgo;
+	private boolean bInited = false;
+	private boolean bRunning = false;
+	private int activeProfile = -1;
+
+	private int hr = -1;
+	private int robust = -1;
+	private int mood = -1;
+	private int r2r = -1;
+	private int hrv = -1;
+	private int heartage = -1;
+	private int afib = -1;
+	private int rdetected = -1;
+	private int stress = -1;
+	private int heartbeat = -1;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		/****************** init UI  *********************/				
+		setContentView(R.layout.realtime_ecg_view);
+		initUI();
+		setUpDrawWaveView();
+		
+		/****************** init Algo *********************/	
+		int algoTypes = 0;
+		algoTypes += NskAlgoType.NSK_ALGO_TYPE_ECG.value;
+		mHandler = new Handler();
+		nskAlgoSdk = new NskAlgoSdk();
+		resetECG(); // algo reset
+		setAlgoListener();
+//		btn_start.setText("Start");
+//		btn_start.setEnabled(false);
+	}
+
+	private void initUI() {
+		// TODO Auto-generated method stub
+		tv_heartRate = (TextView) findViewById(R.id.tv_heartRate);
+		tv_heartRate.setText("");
+		tv_rrInterval = (TextView) findViewById(R.id.tv_rrInterval);
+		tv_rrInterval.setText("");
+		tv_robust = (TextView) findViewById(R.id.tv_robust);
+		tv_robust.setText("");
+
+		// RespiratoryRate, HeaertBeatCount and HRV display
+		// tv_respiratoryRate = (TextView)
+		// findViewById(R.id.tv_respiratoryRate);
+		// tv_respiratoryRate.setText("");
+		tv_heartBeatCount = (TextView) findViewById(R.id.tv_heartBeatCount);
+		tv_heartBeatCount.setText("");
+		tv_hrv = (TextView) findViewById(R.id.tv_hrv);
+		tv_hrv.setText("");
+
+		// Mood, heartAge and Stress display
+		tv_mood = (TextView) findViewById(R.id.tv_mood);
+		tv_mood.setText("");
+		tv_heartAge = (TextView) findViewById(R.id.tv_heartAge);
+		tv_heartAge.setText("");
+		tv_stress = (TextView) findViewById(R.id.tv_stress);
+		tv_stress.setText("");
+
+		// signal quality and FinalHRV display
+		tv_ssq = (TextView) findViewById(R.id.tv_ssq);
+		tv_ssq.setText("");
+		tv_lsq = (TextView) findViewById(R.id.tv_lsq);
+		tv_lsq.setText("");
+		tv_finalHRV = (TextView) findViewById(R.id.tv_finalHRV);
+		tv_finalHRV.setText("");
+
+		wave_layout = (LinearLayout) findViewById(R.id.wave_layout);
+		btn_start = (Button) findViewById(R.id.btn_start);
+		btn_stop = (Button) findViewById(R.id.btn_stop);
+		setListener();
+	}
+
+	private void setAlgoListener() {
+
+		/// display Signal Quality
+		nskAlgoSdk.setOnSignalQualityListener(new NskAlgoSdk.OnSignalQualityListener() {
+			@Override
+			public void onSignalQuality(final int level) {
+				final int fLevel = level;
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						String sqStr = NskAlgoSignalQuality.values()[level].toString();
+						tv_ssq.setText(String.valueOf(sqStr));
+					}
+				});
+			}
+		});
+
+		/// display Algo state
+		nskAlgoSdk.setOnStateChangeListener(new NskAlgoSdk.OnStateChangeListener() {
+			@Override
+			public void onStateChange(int state, int reason) {
+				String stateStr = "";
+				String reasonStr = "";
+				for (NskAlgoState s : NskAlgoState.values()) {
+					if (s.value == state) {
+						stateStr = s.toString();						
+						Log.i(TAG, "state:"+stateStr);
+					}
+				}
+				for (NskAlgoState r : NskAlgoState.values()) {
+					if (r.value == reason) {
+						reasonStr = r.toString();
+						Log.i(TAG, "reason:"+reasonStr);
+					}
+				}
+				Log.d(TAG, "NskAlgoSdkStateChangeListener: state: " + stateStr + ", reason: " + reasonStr);
+				final String finalStateStr = stateStr + " | " + reasonStr;
+				final int finalState = state;
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						// change UI elements here
+						if (finalState == NskAlgoState.NSK_ALGO_STATE_RUNNING.value
+								|| finalState == NskAlgoState.NSK_ALGO_STATE_COLLECTING_BASELINE_DATA.value) {
+							bRunning = true;
+							btn_start.setText("Pause");
+							btn_start.setEnabled(true);
+						} else if (finalState == NskAlgoState.NSK_ALGO_STATE_STOP.value) {
+							bRunning = false;
+							Log.i(TAG, "Algo state stop");
+						} else if (finalState == NskAlgoState.NSK_ALGO_STATE_PAUSE.value) {
+							bRunning = false;
+							btn_start.setText("Start");
+							btn_start.setEnabled(true);
+							Log.i(TAG, "Algo state pause");
+						} else if (finalState == NskAlgoState.NSK_ALGO_STATE_INITED.value
+								|| finalState == NskAlgoState.NSK_ALGO_STATE_UNINTIED.value) {
+							bRunning = false;
+							btn_start.setText("Start");
+							btn_start.setEnabled(true);
+							Log.i(TAG, "Algo state init");
+						}
+					}
+				});
+			}
+		});
+
+		/// display Algo values
+		nskAlgoSdk.setOnECGAlgoIndexListener(new NskAlgoSdk.OnECGAlgoIndexListener() {
+			@Override
+			public void onECGAlgoIndex(NskAlgoECGType type, int value) {
+				boolean bAddToPlot = false;
+				boolean bStatus = true;
+
+				if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_SMOOTH) {
+					bAddToPlot = true;
+					bStatus = false;
+
+					if (currentSelectedAlgo == NskAlgoType.NSK_ALGO_TYPE_ECG) {
+						// Paint paint = plot.getBackgroundPaint();
+						// paint.setColor(Color.rgb(0, 0, 0));
+					}
+
+					/// ECG plot
+					updateWaveView(value);
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_AFIB) {
+					afib = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_HEARTAGE) {
+					heartage = value;
+//					tv_heartRate.post(new Runnable() {
+//						@Override
+//						public void run() {
+//							tv_heartRate.setText(String.valueOf(heartage));
+//						}
+//					});
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_HR) {
+					hr = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_HRV) {
+					hrv = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_MOOD) {
+					mood = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_R2R) {
+					r2r = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_RDETECTED) {
+					rdetected = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_ROBUST_HR) {
+					robust = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_STRESS) {
+					stress = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_HEARTBEAT) {
+					heartbeat = value;
+				} else if (type == NskAlgoECGType.NSK_ALGO_ECG_TYPE_BASELINE_UPDATED) {					
+					byte[] b = nskAlgoSdk.NskAlgoProfileGetBaseline(activeProfile, NskAlgoType.NSK_ALGO_TYPE_ECG.value);					
+				}				
+			}
+		});
+	}
+
+	private void setListener() {
+		// TODO Auto-generated method stub
+		btn_start.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				resetUI();				
+				if (device != null && device.isBond()) {
+					device.startRealTimeECG();
+				} else {
+
+					setBondCallback(new ICallbackForBond() {
+
+						@Override
+						public void callFunction() {
+							// TODO Auto-generated method stub
+							device.startRealTimeECG();
+						}
+
+					});
+					connectToDevice();
+								
+				}
+				Log.i(TAG, "btn_start click ,bRuning="+ (bRunning?"True":"False"));
+				if (bRunning == false) {
+					nskAlgoSdk.NskAlgoStart(false);
+				} else {
+					nskAlgoSdk.NskAlgoPause();
+				}
+			}
+
+		});
+		btn_stop.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				device.stopRealTimeECG();
+				nskAlgoSdk.NskAlgoStop();
+			}
+
+		});
+	}
+
+	private void resetUI() {
+		tv_heartRate.setText("");
+		tv_rrInterval.setText("");
+		tv_robust.setText("");
+		// tv_respiratoryRate.setText("");
+		tv_heartBeatCount.setText("");
+		tv_hrv.setText("");
+		tv_mood.setText("");
+		tv_heartAge.setText("");
+		tv_stress.setText("");
+		tv_ssq.setText("");
+		tv_lsq.setText("");
+		tv_finalHRV.setText("");
+		waveView.clear();
+		dataCount = 0;
+	}
+
+	private int dataCount = 0;
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		tgBleManager = TGBleManager.getInstance();
+		device = (SeagullDevice) tgBleManager.getDevice();
+
+		tgBleManager.setHandler(msgHandler);
+		// device.setTGBleHandler(callback);
+		device.setTGBleHandler(null);// this means we only use handle to
+										// translate data
+
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+	}
+
+	private Handler msgHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			switch (msg.what) {
+			case SeagullDevice.MSG_REALTIME_ECG:
+				handleRealtimeECG(msg.arg1, msg.arg2, msg.obj);
+				Log.d(TAG, "Battery info: arg1:" + msg.arg1+",arg2:"+msg.arg2);
+				break;
+			case SeagullDevice.MSG_BATTERY_LEVEL:
+				Log.d(TAG, "Battery info: " + msg.arg1);
+				break;
+
+			}
+			super.handleMessage(msg);
+		}
+
+	};
+
+	private TGBleHandler callback = new TGBleHandler() {
+
+		/**
+		 * MSG_HISTORY_ECG, MSG_HISTORY_ECG_SAMPLE,int<br/>
+		 * 
+		 * @param callback
+		 */
+
+		@Override
+		public void onDataReceived(int what, int arg1, int arg2, Object obj) {
+			// TODO Auto-generated method stub
+			switch (what) {
+			// use TGBleHandler to receive data will be faster than Handler
+			// If you want to receive ecg data with Handler, please call
+			// device.setTGBleHandler(null); in onResume()
+			case SeagullDevice.MSG_REALTIME_ECG:
+				handleRealtimeECG(arg1, arg2, obj);
+				break;
+			}
+		}
+	};
+
+	protected void handleRealtimeECG(int arg1, int arg2, Object obj) {
+		// TODO Auto-generated method stub
+		switch (arg1) {
+		// If you want to receive ecg data with TGBleHandler , please call
+		// device.setTGBleHandler(callback) in onResume()
+		case SeagullDevice.MSG_REALTIME_ECG_SAMPLE:
+			// updateWaveView(arg2);
+			// send the data to algorithm sdk here
+			if (arg1 == SeagullDevice.MSG_REALTIME_ECG_SAMPLE) {
+				// send the
+				// data to
+				// algorithm
+				// sdk here
+				// arg2 is the data
+				// put the data into algorithm sdk here.
+
+				short pqValue[] = { (short) 200 };
+				nskAlgoSdk.NskAlgoDataStream(NskAlgoDataType.NSK_ALGO_DATA_TYPE_ECG_PQ.value, pqValue, 1);
+
+				short ecg_data[] = { (short) arg2 };
+				nskAlgoSdk.NskAlgoDataStream(NskAlgoDataType.NSK_ALGO_DATA_TYPE_ECG.value, ecg_data, 1);
+				nskAlgoSdk.NskAlgoDataStream(NskAlgoDataType.NSK_ALGO_DATA_TYPE_ECG.value, ecg_data, 1);
+				dataCount += 2;
+			}
+
+			break;
+
+		case SeagullDevice.MSG_REALTIME_ECG_COMMENT:
+			Log.i(TAG, "MSG_REALTIME_ECG_COMMENT: " + obj);
+
+			break;
+		case SeagullDevice.MSG_REALTIME_ECG_FINALHR:
+			Log.i(TAG, "MSG_REALTIME_ECG_FINALHR: " + arg2);
+			break;
+		case SeagullDevice.MSG_REALTIME_ECG_SAMPLERATE:
+			Log.i(TAG, "MSG_REALTIME_ECG_SAMPLERATE: " + arg2);
+			break;
+		case SeagullDevice.MSG_REALTIME_ECG_STOP:
+			Log.i(TAG, "MSG_REALTIME_ECG_STOP: " + obj);
+
+			tv_lsq.post(new Runnable() {
+				@Override
+				public void run() {
+					tv_lsq.setText(String.valueOf(robust));
+				}
+			});
+			tv_finalHRV.post(new Runnable() {
+				@Override
+				public void run() {
+					tv_finalHRV.setText(String.valueOf(hrv));
+				}
+			});
+
+			tv_stress.post(new Runnable() { // you can also get the stress value
+											// when you get 30 rr_interval
+				@Override
+				public void run() {
+					tv_stress.setText(String.valueOf(stress));
+				}
+			});
+
+			handleECGStopResult((TGecgResult) obj);
+			break;
+		case SeagullDevice.MSG_REALTIME_ECG_TS:
+			Log.i(TAG, "MSG_REALTIME_ECG_TS: " + obj);
+			break;
+
+		}
+	}
+
+	private void handleECGStopResult(TGecgResult obj) {
+		// TODO Auto-generated method stub
+		switch (obj) {
+		case TGecgTerminatedNormally: // Operation terminate successfully
+			break;
+		case TGecgTerminatedNoData: // Didn't get any data at the beginning.
+									// Please check sensor and finger, retry.
+			break;
+		case TGecgTerminatedDataStopped: // Can't get data for a while.Please
+											// check sensor and finger, retry.
+			break;
+		case TGecgTerminatedLostConnection: // Lost connection. Please check
+											// connection, retry.
+			break;
+		case TGecgTerminatedAbort: // Terminated by calling disconnect() or
+									// close() , the task is interrupted
+			break;
+		}
+
+	}
+
+	DrawWaveView waveView = null;
+
+	public void setUpDrawWaveView() {
+		// TODO use self view to drawing ECG
+		waveView = new DrawWaveView(getApplicationContext());
+		wave_layout.addView(waveView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		waveView.setValue(2048, 4000, -4000);
+
+	}
+
+	public void updateWaveView(int data) {
+		if (waveView != null) {
+			waveView.updateData(data);
+		}
+	}
+
+	private int sampleRate = 512;
+	private int outputInterval = 30;
+	private int outputPoint = 30;
+	private int heartAgeRecordNumber = 5;
+	private String name = "Mary";
+	private int weight = 65;
+	private int height = 170;
+	private int age = 30;
+	private boolean female = true;
+	private String heartAgePath = "";
+	private String path = "";
+	private int stressFeedback = 0;
+	private int respiratoryRateOutputInterval = 60;
+
+	private void resetECG() {
+		
+		int algoTypes = 0;// = NskAlgoType.NSK_ALGO_TYPE_CR.value;
+		currentSelectedAlgo = NskAlgoType.NSK_ALGO_TYPE_INVALID;
+		algoTypes += NskAlgoType.NSK_ALGO_TYPE_ECG.value;
+		Log.i(TAG, "resetECG algoTypes"+algoTypes);
+		if (bInited) {
+			nskAlgoSdk.NskAlgoUninit();
+			bInited = false;
+		}
+		String license = "NeuroSky_Release_To_Fubon_LB_P1       _Use_Only_May  3 2016";
+		int ret = nskAlgoSdk.NskAlgoInit(algoTypes, getFilesDir().getAbsolutePath(), license);
+		currentActiveAlgo = algoTypes;
+		if (ret == 0) {
+			bInited = true;
+			showToast("Algo SDK has been initialized successfully", Toast.LENGTH_LONG);
+		} else {
+			bInited = false;
+			showToast("Failed to initialize the SDK, code = " + String.valueOf(ret), Toast.LENGTH_LONG);
+			return;
+		}
+
+		// init the active profile here
+		NskAlgoProfile[] profiles = nskAlgoSdk.NskAlgoProfiles();
+		// do some test, clear all the profiles
+		int i = 0;
+		for (i = 0; i < profiles.length; ++i) {
+			nskAlgoSdk.NskAlgoProfileDelete(profiles[0].userId);
+		}
+		profiles = nskAlgoSdk.NskAlgoProfiles();
+
+		if (profiles.length == 0) {
+			try {
+				String dobStr = "1976-1-1";
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date dob = df.parse(dobStr);			
+				NskAlgoProfile profile = new NskAlgoProfile();
+				profile.name = "bob";
+				profile.height = 170;
+				profile.weight = 70;
+				profile.gender = false;
+				profile.dob = dob;
+				nskAlgoSdk.NskAlgoProfileUpdate(profile);
+
+				profiles = nskAlgoSdk.NskAlgoProfiles();
+
+				// setup the ECG config
+				nskAlgoSdk.NskAlgoSetECGConfig(30, 30, 0, 30, (float) 3.5);
+
+				// retrieve the baseline data
+				if (profiles.length > 0) {
+					activeProfile = profiles[0].userId;
+					nskAlgoSdk.NskAlgoProfileActive(activeProfile);
+
+					SharedPreferences settings = PreferenceManager
+							.getDefaultSharedPreferences(RealtimeECGActivity.this);
+					String stringArray = settings.getString("ecgbaseline", null);
+					if (stringArray != null) {
+						String[] split = stringArray.substring(1, stringArray.length() - 1).split(", ");
+						byte[] array = new byte[split.length];
+						for (i = 0; i < split.length; ++i) {
+							array[i] = Byte.parseByte(split[i]);
+						}
+						if (nskAlgoSdk.NskAlgoProfileSetBaseline(activeProfile, NskAlgoType.NSK_ALGO_TYPE_ECG.value,
+								array) != true) {
+							Log.d(TAG, "error in setting the profile baseline");
+						}
+					}
+				}
+
+			}catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void showToast(final String msg, final int timeStyle) {
+		RealtimeECGActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+				Toast.makeText(getApplicationContext(), msg, timeStyle).show();
+			}
+
+		});
+	}
+
+}

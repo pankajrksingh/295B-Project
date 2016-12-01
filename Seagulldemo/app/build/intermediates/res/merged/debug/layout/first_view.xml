@@ -102,6 +102,14 @@
                 android:text="FW Test"
                  android:textColor="#ffffffff"
                 android:textSize="16dp" />
+          <Button
+              android:id="@+id/conn_pill_bottle"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical|center_horizontal|center"
+              android:text="Pill"
+              android:textColor="#ffffffff"
+              android:textSize="16dp" />
         
 
         
@@ -139,6 +147,9 @@
               android:background="@drawable/tv_bg"
              android:text=""/>
      </ScrollView>
-
+    <ListView
+        android:id="@+id/paireddevicelist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
 
 </LinearLayout>

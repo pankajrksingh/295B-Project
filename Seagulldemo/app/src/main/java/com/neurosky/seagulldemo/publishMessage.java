@@ -43,7 +43,7 @@ import static com.neurosky.seagulldemo.BaseActivity.client;
 
 
 public class publishMessage{
-    public void sendMessage(final String inputmsg)
+    public void sendMessage(final String inputmsg, final String topic)
     {
         Runnable runnable = new Runnable() {
             final String msg = inputmsg;
@@ -58,7 +58,7 @@ public class publishMessage{
 
                 MqttMessage message = new MqttMessage(encodedPayload);
                 try {
-                    client.publish("pankaj123", message);
+                    client.publish(topic, message);
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }

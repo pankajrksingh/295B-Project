@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import matplotlib
 import paho.mqtt.client as mqtt
 import numpy as np
+import threading
+import json
+import time
 
 # dataset = hb.get_data('data.csv')
 # print dataset.hart
@@ -22,34 +25,54 @@ import numpy as np
 # print hb.measures.keys()
 
 
+class MQTTThread(threading.Thread):
+    def __init__(self, host, port):
+        super(MQTTThread, self).__init__()
+        self.host = host
+        self.port = port
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+
+    # The callback for when the client receives a CONNACK response from the server.
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected with result code "+str(rc))
+
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
+        print self.topic
+        client.subscribe(self.topic)
 
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe("pankaj123")
-
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    input_array = msg.payload.split(',')
-    # print(msg.topic+" "+str(msg.payload))
-    temp_array = np.array(input_array, dtype='|S4')
-    dataset = temp_array.astype(np.int)
-    # print dataset
-    hb.process(dataset, 0.75, 100)
+    def subscribe_topic(self, topic):
+        self.topic = topic
+        self.client.subscribe(self.topic)
 
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+    # The callback for when a PUBLISH message is received from the server.
+    def on_message(self, client, userdata, msg):
+        print msg.payload
+        # input_array = msg.payload.split(',')
+        # print(msg.topic+" "+str(msg.payload))
 
-client.connect("54.244.148.72", 1883, 60)
+    def publish_message(self, topic, msg):
+        self.client.publish(topic, msg)
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+    def run(self):
+        print "Connectinf to mqtt"
+        self.client.connect(self.host, self.port, 60)
+        self.client.loop_start()
+
+
+temp = MQTTThread("54.244.148.72", 1883)
+temp.subscribe_topic("testpankaj")
+temp.run()
+print "after thread"
+i = 0
+
+while True:
+    # print "pankaj"
+
+    temp.publish_message("testpankaj", i)
+    i += 1
+    time.sleep(1)

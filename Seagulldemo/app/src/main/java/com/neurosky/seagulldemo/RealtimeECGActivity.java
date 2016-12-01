@@ -393,7 +393,7 @@ public class RealtimeECGActivity extends BaseActivity {
 //					HearBeatCount hb = new HearBeatCount(ecgSampleValueList, execution_time);
 //					hb.calculateHeartBeat();
 					publishMessage hbpublish = new publishMessage();
-					hbpublish.sendMessage(ecgData.toString());
+					hbpublish.sendMessage(ecgData.toString(), "pankaj123");
 
 					counter = 0;
 					System.out.println("##################################################################");

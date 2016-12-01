@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,6 +37,9 @@ import com.neurosky.blecommunication.eventbus.ExceptionEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * BaseActivity is used as the sdk adapter. You can also use a service.
@@ -48,8 +52,8 @@ public class BaseActivity extends Activity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     // Using static to keep only one instance
-	private static BluetoothAdapter mBluetoothAdapter= null;
-	private static BluetoothDevice mBluetoothDevice= null;
+	public static BluetoothAdapter mBluetoothAdapter= null;
+	public static BluetoothDevice mBluetoothDevice= null;
 	private static TGBleManager tgBleManager = null;
 	private static SeagullDevice seagullDevice = null;
 	private static Handler handler ;
@@ -68,6 +72,7 @@ public class BaseActivity extends Activity {
 	public static final String SP_PROFILE_BIRTH_MONTH = "proifle_birth_month";
 	public static final String SP_PROFILE_BIRTH_YEAR = "proifle_birth_year";
 	public static MqttClient client = null;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

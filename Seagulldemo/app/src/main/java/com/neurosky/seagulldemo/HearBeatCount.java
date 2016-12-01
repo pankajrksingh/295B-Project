@@ -76,7 +76,7 @@ public class HearBeatCount{
             e.printStackTrace();
         }
         publishMessage hbpublish = new publishMessage();
-        hbpublish.sendMessage(json.toString());
+        hbpublish.sendMessage(json.toString(), "pankaj123");
 
     }
 
